@@ -64,15 +64,31 @@ try{
   $("yes").addEventListener("click",()=>sendAnswer("Yes"));
 
 let noMoves = 0;
+const noButton = $("no");
 
-$("no").addEventListener("pointerenter", () => {
-  if (noMoves < 3) {
-    const x = Math.random() * 100 - 50;
-    const y = Math.random() * 80 - 40;
-    $("no").style.transform = `translate(${x}px, ${y}px)`;
-    noMoves++;
+function moveNo() {
+  if (noMoves >= 3) return;
+
+  const x = Math.random() * 160 - 80;
+  const y = Math.random() * 100 - 50;
+
+  noButton.style.transform = `translate(${x}px, ${y}px)`;
+  noMoves++;
+}
+
+noButton.addEventListener("pointerenter", (e) => {
+  if (e.pointerType === "mouse") moveNo();
+});
+
+noButton.addEventListener("pointerdown", (e) => {
+  if (e.pointerType === "touch" && noMoves < 3) {
+    e.preventDefault();
+    moveNo();
   }
 });
+
+noButton.addEventListener("click", () => sendAnswer("No"));
+
 
 $("no").addEventListener("click",()=>sendAnswer("No"));
 $("yes").addEventListener("click",()=>sendAnswer("Yes"));$("no").addEventListener("click",()=>sendAnswer("No"));
