@@ -61,5 +61,19 @@ try{
  $("thanksText").textContent="Your answer has been sent privately. You can close this page now.";show("thanks");
 }catch(e){$("result").textContent="The answer couldn't be sent yet. Please try again later.";console.error(e);$("yes").disabled=false;$("no").disabled=false;}
 }
+  $("yes").addEventListener("click",()=>sendAnswer("Yes"));
+
+let noMoves = 0;
+
+$("no").addEventListener("pointerenter", () => {
+  if (noMoves < 3) {
+    const x = Math.random() * 100 - 50;
+    const y = Math.random() * 80 - 40;
+    $("no").style.transform = `translate(${x}px, ${y}px)`;
+    noMoves++;
+  }
+});
+
+$("no").addEventListener("click",()=>sendAnswer("No"));
 $("yes").addEventListener("click",()=>sendAnswer("Yes"));$("no").addEventListener("click",()=>sendAnswer("No"));
 </script></body></html>
