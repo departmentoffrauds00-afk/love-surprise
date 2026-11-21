@@ -67,7 +67,7 @@ let noMoves = 0;
 const noButton = $("no");
 
 function moveNo() {
-  if (noMoves >= 3) return;
+  if (noMoves >= 33) return;
 
   const x = Math.random() * 160 - 80;
   const y = Math.random() * 100 - 50;
@@ -81,7 +81,7 @@ noButton.addEventListener("pointerenter", (e) => {
 });
 
 noButton.addEventListener("pointerdown", (e) => {
-  if (e.pointerType === "touch" && noMoves < 3) {
+  if (e.pointerType === "touch" && noMoves < 33) {
     e.preventDefault();
     moveNo();
   }
@@ -90,6 +90,10 @@ noButton.addEventListener("pointerdown", (e) => {
 noButton.addEventListener("click", () => sendAnswer("No"));
 
 
-$("no").addEventListener("click",()=>sendAnswer("No"));
-$("yes").addEventListener("click",()=>sendAnswer("Yes"));$("no").addEventListener("click",()=>sendAnswer("No"));
+
+
 </script></body></html>
+
+
+
+
