@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#fff1f5"><title>A Little Something for You 💗</title>
+<style>
+:root{--pink:#e85d87;--deep:#a8325c;--ink:#573344}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:ui-rounded,"Segoe UI",system-ui,sans-serif;color:var(--ink);background:radial-gradient(circle at 10% 15%,#ffe0ea 0 2px,transparent 3px),radial-gradient(circle at 90% 80%,#ffd7e4 0 3px,transparent 4px),linear-gradient(145deg,#fff7f9,#ffeaf1);display:grid;place-items:center;padding:22px}
+.card{width:min(100%,560px);background:#fffffff0;border:1px solid #f9d5e0;border-radius:28px;box-shadow:0 22px 70px #a8325c1c;padding:clamp(24px,6vw,42px);text-align:center;position:relative}
+.tiny{font-size:.9rem;letter-spacing:.13em;text-transform:uppercase;color:#b76a83;font-weight:700}h1{font-family:Georgia,serif;font-weight:500;font-size:clamp(2rem,8vw,3.15rem);line-height:1.12;color:var(--deep);margin:14px 0}p{line-height:1.65;color:#795363}.heart{font-size:3.2rem;display:inline-block;animation:beat 1.4s infinite}@keyframes beat{0%,100%{transform:scale(1)}15%{transform:scale(1.14)}30%{transform:scale(1)}}
+.progress{height:7px;background:#f9e1e9;border-radius:20px;overflow:hidden;margin:24px 0 8px}.bar{height:100%;width:0;background:linear-gradient(90deg,#f3a0b9,#dc4d7b);transition:width .3s}.count{font-size:.85rem;color:#a66c80}.question{font-family:Georgia,serif;font-size:1.55rem;color:#78384f;line-height:1.35;margin:28px 0}.answers{display:grid;gap:12px;margin-top:22px}button{font:inherit;border:0;border-radius:999px;padding:14px 22px;cursor:pointer;transition:transform .15s,box-shadow .15s}.choice{background:#fff0f4;border:1px solid #f4c9d7;color:#8c3f5b;text-align:left}.choice:hover{transform:translateY(-2px);box-shadow:0 8px 20px #a8325c18}.primary{background:linear-gradient(100deg,#ed7b9e,#d94d7c);color:white;font-weight:700;box-shadow:0 8px 20px #d94d7c35}.primary:hover{transform:translateY(-2px)}.secondary{background:#fff0f4;color:#944b66;border:1px solid #f1c7d5}.hidden{display:none!important}.final-actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:26px}.note{font-size:.82rem;color:#a77b8c;margin-top:22px}.sparkle{position:absolute;opacity:.45;color:#e58ba7;font-size:1.4rem}.s1{top:18px;left:22px}.s2{top:30px;right:25px}.s3{bottom:18px;right:26px}.result{font-weight:700;color:#a8325c;min-height:1.4em;margin-top:16px}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style></head>
+<body><main class="card">
+<span class="sparkle s1">✦</span><span class="sparkle s2">♡</span><span class="sparkle s3">✧</span>
+<section id="welcome"><div class="heart">💗</div><div class="tiny">A little surprise for you</div><h1>Hey, you...</h1><p>I made something small, just for you. Would you like to answer five little questions?</p><button class="primary" id="start">Let's begin ✨</button><p class="note">Take your time. There's no wrong answer.</p></section>
+<section id="quiz" class="hidden"><div class="tiny">A little questionnaire</div><div class="progress"><div class="bar" id="bar"></div></div><div class="count" id="count">Question 1 of 5</div><div class="question" id="question"></div><div class="answers" id="answers"></div><p class="note">Choose whichever answer feels right to you 💕</p></section>
+<section id="final" class="hidden"><div class="heart">💌</div><div class="tiny">One last thing...</div><h1>I love you so much.</h1><p style="font-family:Georgia,serif;font-size:1.55rem;color:#78384f">Would you like to be mine?</p><p>Whatever your answer, thank you for being someone special to me.</p><div class="final-actions"><button class="primary" id="yes">Yes! 💖</button><button class="secondary" id="no">No, thank you</button></div><div class="result" id="result" aria-live="polite"></div></section>
+<section id="thanks" class="hidden"><div class="heart" id="thanksHeart">💗</div><div class="tiny">Your answer has been sent</div><h1 id="thanksTitle">Thank you for being honest.</h1><p id="thanksText">Your response was sent privately. You can close this page now.</p></section>
+</main>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+// Replace the values below with your Firebase project's web app configuration.
+const firebaseConfig = {
+  apiKey: "PASTE_API_KEY_HERE",
+  authDomain: "PASTE_PROJECT_ID_HERE.firebaseapp.com",
+  projectId: "PASTE_PROJECT_ID_HERE",
+  storageBucket: "PASTE_PROJECT_ID_HERE.appspot.com",
+  messagingSenderId: "PASTE_MESSAGING_SENDER_ID_HERE",
+  appId: "PASTE_APP_ID_HERE"
+};
+const configured = !Object.values(firebaseConfig).some(v => v.includes("PASTE_"));
+let db = null;
+if (configured) { const app = initializeApp(firebaseConfig); db = getFirestore(app); }
+
+const questions=[
+{q:"What's your favourite kind of little moment?",a:["A long conversation 🌙","Laughing at silly things 🌷","A peaceful moment together ☁️"]},
+{q:"What makes a day feel special?",a:["A thoughtful message 💌","A surprise smile 😊","Time with someone I care about 💗"]},
+{q:"Which sounds most like a lovely date?",a:["A sunset walk 🌅","Coffee and good conversation ☕","A fun little adventure 🎡"]},
+{q:"What matters most in a connection?",a:["Kindness and respect 🤍","Trust and honesty 🌼","Laughter and support 🫶"]},
+{q:"If someone cares about you, what should they always give you?",a:["Space to be myself 🦋","A listening ear 💕","Respect for my feelings 🌸"]}
+];
+const sections=["welcome","quiz","final","thanks"],answers=[];let current=0;
+const $=id=>document.getElementById(id);
+function show(id){sections.forEach(s=>$(s).classList.toggle("hidden",s!==id));}
+function renderQuestion(){
+$("count").textContent=`Question ${current+1} of 5`;$("bar").style.width=`${current/5*100}%`;$("question").textContent=questions[current].q;$("answers").innerHTML="";
+questions[current].a.forEach(answer=>{const b=document.createElement("button");b.className="choice";b.textContent=answer;b.addEventListener("click",()=>{answers.push(answer);current++;if(current===5){$("bar").style.width="100%";show("final")}else renderQuestion()});$("answers").appendChild(b)});
+}
+$("start").addEventListener("click",()=>{show("quiz");renderQuestion()});
+async function sendAnswer(answer){
+$("yes").disabled=true;$("no").disabled=true;
+try{
+ if(!db) throw new Error("The Firebase settings have not been added yet.");
+ await addDoc(collection(db,"loveResponses"),{answer,quizAnswers:answers,submittedAt:serverTimestamp()});
+ $("thanksHeart").textContent=answer==="Yes"?"💖":"🤍";
+ $("thanksTitle").textContent=answer==="Yes"?"You just made me smile!":"Thank you for being honest.";
+ $("thanksText").textContent="Your answer has been sent privately. You can close this page now.";show("thanks");
+}catch(e){$("result").textContent="The answer couldn't be sent yet. Please try again later.";console.error(e);$("yes").disabled=false;$("no").disabled=false;}
+}
+$("yes").addEventListener("click",()=>sendAnswer("Yes"));$("no").addEventListener("click",()=>sendAnswer("No"));
+</script></body></html>

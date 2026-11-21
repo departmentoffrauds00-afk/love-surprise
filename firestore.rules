@@ -1,0 +1,13 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /loveResponses/{responseId} {
+      // Visitors may submit a valid response, but nobody using the public website can read it.
+      allow create: if request.resource.data.keys().hasOnly(['answer', 'quizAnswers', 'submittedAt'])
+                    && request.resource.data.answer in ['Yes', 'No']
+                    && request.resource.data.quizAnswers is list
+                    && request.resource.data.quizAnswers.size() == 5;
+      allow read, update, delete: if false;
+    }
+  }
+}
